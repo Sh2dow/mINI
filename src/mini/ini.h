@@ -21,64 +21,64 @@
  *
  */
 
-///////////////////////////////////////////////////////////////////////////////
-//
-//  /mINI/ v0.9.14
-//  An INI file reader and writer for the modern age.
-//
-///////////////////////////////////////////////////////////////////////////////
-//
-//  A tiny utility library for manipulating INI files with a straightforward
-//  API and a minimal footprint. It conforms to the (somewhat) standard INI
-//  format - sections and keys are case insensitive and all leading and
-//  trailing whitespace is ignored. Comments are lines that begin with a
-//  semicolon. Trailing comments are allowed on section lines.
-//
-//  Files are read on demand, upon which data is kept in memory and the file
-//  is closed. This utility supports lazy writing, which only writes changes
-//  and updates to a file and preserves custom formatting and comments. A lazy
-//  write invoked by a write() call will read the output file, find what
-//  changes have been made and update the file accordingly. If you only need to
-//  generate files, use generate() instead. Section and key order is preserved
-//  on read, write and insert.
-//
-///////////////////////////////////////////////////////////////////////////////
-//
-//  /* BASIC USAGE EXAMPLE: */
-//
-//  /* read from file */
-//  mINI::INIFile file("myfile.ini");
-//  mINI::INIStructure ini;
-//  file.read(ini);
-//
-//  /* read value; gets a reference to actual value in the structure.
-//     if key or section don't exist, a new empty value will be created */
-//  std::string& value = ini["section"]["key"];
-//
-//  /* read value safely; gets a copy of value in the structure.
-//     does not alter the structure */
-//  std::string value = ini.get("section").get("key");
-//
-//  /* set or update values */
-//  ini["section"]["key"] = "value";
-//
-//  /* set multiple values */
-//  ini["section2"].set({
-//      {"key1", "value1"},
-//      {"key2", "value2"}
-//  });
-//
-//  /* write updates back to file, preserving comments and formatting */
-//  file.write(ini);
-//
-//  /* or generate a file (overwrites the original) */
-//  file.generate(ini);
-//
-///////////////////////////////////////////////////////////////////////////////
-//
-//  Long live the INI file!!!
-//
-///////////////////////////////////////////////////////////////////////////////
+ ///////////////////////////////////////////////////////////////////////////////
+ //
+ //  /mINI/ v0.9.14
+ //  An INI file reader and writer for the modern age.
+ //
+ ///////////////////////////////////////////////////////////////////////////////
+ //
+ //  A tiny utility library for manipulating INI files with a straightforward
+ //  API and a minimal footprint. It conforms to the (somewhat) standard INI
+ //  format - sections and keys are case insensitive and all leading and
+ //  trailing whitespace is ignored. Comments are lines that begin with a
+ //  semicolon. Trailing comments are allowed on section lines.
+ //
+ //  Files are read on demand, upon which data is kept in memory and the file
+ //  is closed. This utility supports lazy writing, which only writes changes
+ //  and updates to a file and preserves custom formatting and comments. A lazy
+ //  write invoked by a write() call will read the output file, find what
+ //  changes have been made and update the file accordingly. If you only need to
+ //  generate files, use generate() instead. Section and key order is preserved
+ //  on read, write and insert.
+ //
+ ///////////////////////////////////////////////////////////////////////////////
+ //
+ //  /* BASIC USAGE EXAMPLE: */
+ //
+ //  /* read from file */
+ //  mINI::INIFile file("myfile.ini");
+ //  mINI::INIStructure ini;
+ //  file.read(ini);
+ //
+ //  /* read value; gets a reference to actual value in the structure.
+ //     if key or section don't exist, a new empty value will be created */
+ //  std::string& value = ini["section"]["key"];
+ //
+ //  /* read value safely; gets a copy of value in the structure.
+ //     does not alter the structure */
+ //  std::string value = ini.get("section").get("key");
+ //
+ //  /* set or update values */
+ //  ini["section"]["key"] = "value";
+ //
+ //  /* set multiple values */
+ //  ini["section2"].set({
+ //      {"key1", "value1"},
+ //      {"key2", "value2"}
+ //  });
+ //
+ //  /* write updates back to file, preserving comments and formatting */
+ //  file.write(ini);
+ //
+ //  /* or generate a file (overwrites the original) */
+ //  file.generate(ini);
+ //
+ ///////////////////////////////////////////////////////////////////////////////
+ //
+ //  Long live the INI file!!!
+ //
+ ///////////////////////////////////////////////////////////////////////////////
 
 #ifndef MINI_INI_H_
 #define MINI_INI_H_
@@ -93,6 +93,7 @@
 #include <fstream>
 #include <sys/stat.h>
 #include <cctype>
+#include <filesystem>
 
 namespace mINI
 {
@@ -109,7 +110,7 @@ namespace mINI
 		{
 			std::transform(str.begin(), str.end(), str.begin(), [](const char c) {
 				return static_cast<char>(std::tolower(c));
-			});
+				});
 		}
 #endif
 		inline void replace(std::string& str, std::string const& a, std::string const& b)
@@ -353,7 +354,7 @@ namespace mINI
 					header[0] == static_cast<char>(0xEF) &&
 					header[1] == static_cast<char>(0xBB) &&
 					header[2] == static_cast<char>(0xBF)
-				);
+					);
 			}
 			else {
 				isBOM = false;
@@ -389,9 +390,9 @@ namespace mINI
 		}
 
 	public:
-		INIReader(std::string const& filename, bool keepLineData = false)
+		INIReader(std::u8string const& filename, bool keepLineData = false)
 		{
-			fileReadStream.open(filename, std::ios::in | std::ios::binary);
+			fileReadStream.open(std::filesystem::path(filename), std::ios::in | std::ios::binary);
 			if (keepLineData)
 			{
 				lineData = std::make_shared<T_LineData>();
@@ -448,9 +449,9 @@ namespace mINI
 	public:
 		bool prettyPrint = false;
 
-		INIGenerator(std::string const& filename)
+		INIGenerator(std::u8string const& filename)
 		{
-			fileWriteStream.open(filename, std::ios::out | std::ios::binary);
+			fileWriteStream.open(std::filesystem::path(filename), std::ios::out | std::ios::binary);
 		}
 		~INIGenerator() { }
 
@@ -514,7 +515,7 @@ namespace mINI
 		using T_LineData = std::vector<std::string>;
 		using T_LineDataPtr = std::shared_ptr<T_LineData>;
 
-		std::string filename;
+		std::u8string filename;
 
 		T_LineData getLazyOutput(T_LineDataPtr const& lineData, INIStructure& data, INIStructure& original)
 		{
@@ -675,16 +676,15 @@ namespace mINI
 	public:
 		bool prettyPrint = false;
 
-		INIWriter(std::string const& filename)
-		: filename(filename)
+		INIWriter(std::u8string const& filename)
+			: filename(filename)
 		{
 		}
 		~INIWriter() { }
 
 		bool operator<<(INIStructure& data)
 		{
-			struct stat buf;
-			bool fileExists = (stat(filename.c_str(), &buf) == 0);
+			bool fileExists = std::filesystem::exists(filename);
 			if (!fileExists)
 			{
 				INIGenerator generator(filename);
@@ -708,7 +708,7 @@ namespace mINI
 				return false;
 			}
 			T_LineData output = getLazyOutput(lineData, data, originalData);
-			std::ofstream fileWriteStream(filename, std::ios::out | std::ios::binary);
+			std::ofstream fileWriteStream(std::filesystem::path(filename), std::ios::out | std::ios::binary);
 			if (fileWriteStream.is_open())
 			{
 				if (fileIsBOM) {
@@ -741,11 +741,11 @@ namespace mINI
 	class INIFile
 	{
 	private:
-		std::string filename;
+		std::u8string filename;
 
 	public:
-		INIFile(std::string const& filename)
-		: filename(filename)
+		INIFile(std::u8string const& filename)
+			: filename(filename)
 		{ }
 
 		~INIFile() { }
