@@ -748,6 +748,10 @@ namespace mINI
 			: filename(filename)
 		{ }
 
+		INIFile(std::string const& filename)
+			: filename(std::filesystem::path(filename).u8string())
+		{ }
+
 		~INIFile() { }
 
 		bool read(INIStructure& data) const
