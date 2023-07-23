@@ -1,6 +1,10 @@
 # mINI
 
-v0.9.14
+v0.9.15
+
+## Fork Note
+
+This fork aims to add more comment delimiters ('#' & '//') and inline comment support. It also add UTF-8 file paths supports which is done by @xan1242.
 
 ## Info
 
@@ -11,8 +15,8 @@ It conforms to the following format:
 - whitespace around sections, keys and values is ignored
 - empty section and key names are allowed
 - keys that do not belong to a section are ignored
-- comments are lines where the first non-whitespace character is a semicolon (`;`)
-- trailing comments are allowed on section lines, but not key/value lines
+- comments are lines where the first non-whitespace character is a semicolon (`;`), hash('#') or the first two are double forward-slashes('//')
+- trailing comments are allowed
 - every entry exists on a single line and multiline is not supported
 
 
@@ -328,5 +332,7 @@ This will affect reading and writing from files and access to the structure.
 ## License
 
 Copyright (c) 2018 Danijel Durakovic
+Copyright (c) 2023 Lovro Pleše
+Copyright (c) 2023 Anil "nlgxzef" Gezergen
 
 MIT License

@@ -2,6 +2,7 @@
  * The MIT License (MIT)
  * Copyright (c) 2018 Danijel Durakovic
  * Copyright (c) 2023 Lovro Pleše
+ * Copyright (c) 2023 Anil "nlgxzef" Gezergen
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -24,7 +25,7 @@
 
  ///////////////////////////////////////////////////////////////////////////////
  //
- //  /mINI/ v0.9.14
+ //  /mINI/ v0.9.15
  //  An INI file reader and writer for the modern age.
  //
  ///////////////////////////////////////////////////////////////////////////////
@@ -290,7 +291,11 @@ namespace mINI
 				return PDataType::PDATA_NONE;
 			}
 			char firstCharacter = line[0];
-			if (firstCharacter == ';')
+			if (firstCharacter == ';' || firstCharacter == '#')
+			{
+				return PDataType::PDATA_COMMENT;
+			}
+			if (line.size() >= 2 && firstCharacter == '/' && line[1] == '/')
 			{
 				return PDataType::PDATA_COMMENT;
 			}
@@ -300,6 +305,20 @@ namespace mINI
 				if (commentAt != std::string::npos)
 				{
 					line = line.substr(0, commentAt);
+				}
+				commentAt = line.find_first_of('#');
+				if (commentAt != std::string::npos)
+				{
+					line = line.substr(0, commentAt);
+				}
+				commentAt = line.find_first_of('/');
+				if (commentAt != std::string::npos)
+				{
+					auto comment2At = line.find_first_of('/', commentAt + 1);
+					if (comment2At != std::string::npos && comment2At == commentAt + 1)
+					{
+						line = line.substr(0, commentAt);
+					}
 				}
 				auto closingBracketAt = line.find_last_of(']');
 				if (closingBracketAt != std::string::npos)
@@ -315,6 +334,26 @@ namespace mINI
 			auto equalsAt = lineNorm.find_first_of('=');
 			if (equalsAt != std::string::npos)
 			{
+				auto commentAt = line.find_first_of(';');
+				if (commentAt != std::string::npos)
+				{
+					line = line.substr(0, commentAt);
+				}
+				commentAt = line.find_first_of('#');
+				if (commentAt != std::string::npos)
+				{
+					line = line.substr(0, commentAt);
+				}
+				commentAt = line.find_first_of('/');
+				if (commentAt != std::string::npos)
+				{
+					auto comment2At = line.find_first_of('/', commentAt + 1);
+					if (comment2At != std::string::npos && comment2At == commentAt + 1)
+					{
+						line = line.substr(0, commentAt);
+					}
+				}
+
 				auto key = line.substr(0, equalsAt);
 				INIStringUtil::trim(key);
 				INIStringUtil::replace(key, "\\=", "=");
