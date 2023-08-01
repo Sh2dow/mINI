@@ -107,6 +107,11 @@ namespace mINI
 			str.erase(str.find_last_not_of(whitespaceDelimiters) + 1);
 			str.erase(0, str.find_first_not_of(whitespaceDelimiters));
 		}
+		inline void trimQuotes(std::string& str)
+		{
+			str.erase(str.find_last_not_of("\"") + 1);
+			str.erase(0, str.find_first_not_of("\""));
+		}
 #ifndef MINI_CASE_SENSITIVE
 		inline void toLower(std::string& str)
 		{
@@ -359,6 +364,7 @@ namespace mINI
 				INIStringUtil::replace(key, "\\=", "=");
 				auto value = line.substr(equalsAt + 1);
 				INIStringUtil::trim(value);
+				INIStringUtil::trimQuotes(value);
 				parseData.first = key;
 				parseData.second = value;
 				return PDataType::PDATA_KEYVALUE;
