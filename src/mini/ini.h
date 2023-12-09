@@ -391,9 +391,9 @@ namespace mINI
 		}
 
 	public:
-		INIReader(std::u8string const& filename, bool keepLineData = false)
+		INIReader(std::filesystem::path const& filename, bool keepLineData = false)
 		{
-			fileReadStream.open(std::filesystem::path(filename), std::ios::in | std::ios::binary);
+			fileReadStream.open(filename, std::ios::in | std::ios::binary);
 			if (keepLineData)
 			{
 				lineData = std::make_shared<T_LineData>();
@@ -450,9 +450,9 @@ namespace mINI
 	public:
 		bool prettyPrint = false;
 
-		INIGenerator(std::u8string const& filename)
+		INIGenerator(std::filesystem::path const& filename)
 		{
-			fileWriteStream.open(std::filesystem::path(filename), std::ios::out | std::ios::binary);
+			fileWriteStream.open(filename, std::ios::out | std::ios::binary);
 		}
 		~INIGenerator() { }
 
@@ -516,7 +516,7 @@ namespace mINI
 		using T_LineData = std::vector<std::string>;
 		using T_LineDataPtr = std::shared_ptr<T_LineData>;
 
-		std::u8string filename;
+		std::filesystem::path filename;
 
 		T_LineData getLazyOutput(T_LineDataPtr const& lineData, INIStructure& data, INIStructure& original)
 		{
@@ -677,7 +677,7 @@ namespace mINI
 	public:
 		bool prettyPrint = false;
 
-		INIWriter(std::u8string const& filename)
+		INIWriter(std::filesystem::path const& filename)
 			: filename(filename)
 		{
 		}
@@ -709,7 +709,7 @@ namespace mINI
 				return false;
 			}
 			T_LineData output = getLazyOutput(lineData, data, originalData);
-			std::ofstream fileWriteStream(std::filesystem::path(filename), std::ios::out | std::ios::binary);
+			std::ofstream fileWriteStream(filename, std::ios::out | std::ios::binary);
 			if (fileWriteStream.is_open())
 			{
 				if (fileIsBOM) {
@@ -742,15 +742,11 @@ namespace mINI
 	class INIFile
 	{
 	private:
-		std::u8string filename;
+		std::filesystem::path filename;
 
 	public:
-		INIFile(std::u8string const& filename)
+		INIFile(std::filesystem::path const& filename)
 			: filename(filename)
-		{ }
-
-		INIFile(std::string const& filename)
-			: filename(std::filesystem::path(filename).u8string())
 		{ }
 
 		~INIFile() { }
