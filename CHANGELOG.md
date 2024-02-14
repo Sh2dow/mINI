@@ -1,24 +1,39 @@
+## 0.9.17 (Feb 11, 2024)
+- Renamed the fork to mINI-Extra.
+- Switched to std::filesystem::path.
+- Ported the changes from v0.9.15 of the main branch:
+-- `BUGFIX` Fixes G++ warnings and implements a copy assignment operator for mINI::INIMap. ([#28](https://github.com/metayeti/mINI/pull/28))
+-- Updated lest from v1.32.0 to v1.35.2.
+
+## 0.9.16 (Aug 1, 2023)
+- Leading and trailing quotes now get trimmed from the values. ("mustang" -> mustang)
+
+## 0.9.15 (Jul 23, 2023)
+- Added UTF-8 file paths support.
+- Added # and // as comment delimiters.
+- Trailing comments are now allowed for key/value lines.
+
 ## 0.9.14 (May 27, 2022)
-- `BUGFIX` - Fixes C4310 warning. ([#19](https://github.com/pulzed/mINI/issues/19))
+- `BUGFIX` - Fixes C4310 warning. ([#19](https://github.com/metayeti/mINI/issues/19))
 
 ## 0.9.13 (April 25, 2022)
-- `BUGFIX` - Writer now understands UTF-8 BOM-encoded files. ([#7](https://github.com/pulzed/mINI/issues/17))
+- `BUGFIX` - Writer now understands UTF-8 BOM-encoded files. ([#7](https://github.com/metayeti/mINI/issues/17))
 - `BUGFIX` - Fixes a bug introduced in 0.9.12 where reader would break when reading empty files.
 
 ## 0.9.12 (April 24, 2022)
-- `BUGFIX` - Fixes parser breaking for UTF-8 BOM-encoded files. ([#7](https://github.com/pulzed/mINI/issues/17))
+- `BUGFIX` - Fixes parser breaking for UTF-8 BOM-encoded files. ([#7](https://github.com/metayeti/mINI/issues/17))
 
 ## 0.9.11 (October 6, 2021)
 - `BUGFIX` - Fixes various compiler warnings.
 
 ## 0.9.10 (March 4, 2021)
-- `BUGFIX` - Change delimiter constants to `const char* const` to prevent unnecessary allocations. ([#5](https://github.com/pulzed/mINI/issues/5))
+- `BUGFIX` - Change delimiter constants to `const char* const` to prevent unnecessary allocations. ([#5](https://github.com/metayeti/mINI/issues/5))
 
 ## 0.9.9 (February 22, 2021)
-- `BUGFIX` Adds missing cctype header. ([#4](https://github.com/pulzed/mINI/pull/4))
+- `BUGFIX` Adds missing cctype header. ([#4](https://github.com/metayeti/mINI/pull/4))
 
 ## 0.9.8 (February 14, 2021)
-- `BUGFIX` Avoid C4244 warning. ([#2](https://github.com/pulzed/mINI/pull/2))
+- `BUGFIX` Avoid C4244 warning. ([#2](https://github.com/metayeti/mINI/pull/2))
 
 ## 0.9.7 (August 14, 2018)
 - `FEATURE` Adds case sensitivity toggle via a macro definition.

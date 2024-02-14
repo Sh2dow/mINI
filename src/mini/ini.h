@@ -2,7 +2,7 @@
  * The MIT License (MIT)
  * Copyright (c) 2018 Danijel Durakovic
  * Copyright (c) 2023 Lovro Pleše
- * Copyright (c) 2023 Anil "nlgxzef" Gezergen
+ * Copyright (c) 2023-2024 Anil "nlgxzef" Gezergen
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -25,7 +25,7 @@
 
  ///////////////////////////////////////////////////////////////////////////////
  //
- //  /mINI/ v0.9.15
+ //  /mINI-Extra/ v0.9.17
  //  An INI file reader and writer for the modern age.
  //
  ///////////////////////////////////////////////////////////////////////////////
@@ -164,7 +164,11 @@ namespace mINI
 
 		INIMap() { }
 
-		INIMap(INIMap const& other)
+		INIMap(INIMap const& other) : dataIndexMap(other.dataIndexMap), data(other.data)
+		{
+		}
+
+		INIMap& operator=(INIMap const& other)
 		{
 			std::size_t data_size = other.data.size();
 			for (std::size_t i = 0; i < data_size; ++i)
@@ -174,6 +178,7 @@ namespace mINI
 				data.emplace_back(key, obj);
 			}
 			dataIndexMap = T_DataIndexMap(other.dataIndexMap);
+			return *this;
 		}
 
 		T& operator[](std::string key)
@@ -436,9 +441,9 @@ namespace mINI
 		}
 
 	public:
-		INIReader(std::u8string const& filename, bool keepLineData = false)
+		INIReader(std::filesystem::path const& filename, bool keepLineData = false)
 		{
-			fileReadStream.open(std::filesystem::path(filename), std::ios::in | std::ios::binary);
+			fileReadStream.open(filename, std::ios::in | std::ios::binary);
 			if (keepLineData)
 			{
 				lineData = std::make_shared<T_LineData>();
@@ -495,9 +500,9 @@ namespace mINI
 	public:
 		bool prettyPrint = false;
 
-		INIGenerator(std::u8string const& filename)
+		INIGenerator(std::filesystem::path const& filename)
 		{
-			fileWriteStream.open(std::filesystem::path(filename), std::ios::out | std::ios::binary);
+			fileWriteStream.open(filename, std::ios::out | std::ios::binary);
 		}
 		~INIGenerator() { }
 
@@ -561,7 +566,7 @@ namespace mINI
 		using T_LineData = std::vector<std::string>;
 		using T_LineDataPtr = std::shared_ptr<T_LineData>;
 
-		std::u8string filename;
+		std::filesystem::path filename;
 
 		T_LineData getLazyOutput(T_LineDataPtr const& lineData, INIStructure& data, INIStructure& original)
 		{
@@ -722,7 +727,7 @@ namespace mINI
 	public:
 		bool prettyPrint = false;
 
-		INIWriter(std::u8string const& filename)
+		INIWriter(std::filesystem::path const& filename)
 			: filename(filename)
 		{
 		}
@@ -754,7 +759,7 @@ namespace mINI
 				return false;
 			}
 			T_LineData output = getLazyOutput(lineData, data, originalData);
-			std::ofstream fileWriteStream(std::filesystem::path(filename), std::ios::out | std::ios::binary);
+			std::ofstream fileWriteStream(filename, std::ios::out | std::ios::binary);
 			if (fileWriteStream.is_open())
 			{
 				if (fileIsBOM) {
@@ -787,15 +792,11 @@ namespace mINI
 	class INIFile
 	{
 	private:
-		std::u8string filename;
+		std::filesystem::path filename;
 
 	public:
-		INIFile(std::u8string const& filename)
+		INIFile(std::filesystem::path const& filename)
 			: filename(filename)
-		{ }
-
-		INIFile(std::string const& filename)
-			: filename(std::filesystem::path(filename).u8string())
 		{ }
 
 		~INIFile() { }
