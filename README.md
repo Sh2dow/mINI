@@ -331,8 +331,8 @@ This will affect reading and writing from files and access to the structure.
 
 ## License
 
-Copyright (c) 2018 Danijel Durakovic
-Copyright (c) 2023 Lovro Pleše
-Copyright (c) 2023-2024 Anil "nlgxzef" Gezergen
+Copyright (c) 2018 Danijel Durakovic  
+Copyright (c) 2023 Lovro Pleše  
+Copyright (c) 2023-2024 Anil "nlgxzef" Gezergen  
 
 MIT License

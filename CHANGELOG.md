@@ -1,9 +1,9 @@
 ## 0.9.17 (Feb 11, 2024)
 - Renamed the fork to mINI-Extra.
 - Switched to std::filesystem::path.
-- Ported the changes from v0.9.15 of the main branch:
--- `BUGFIX` Fixes G++ warnings and implements a copy assignment operator for mINI::INIMap. ([#28](https://github.com/metayeti/mINI/pull/28))
--- Updated lest from v1.32.0 to v1.35.2.
+- Ported the changes from v0.9.15 of the main branch:  
+-- `BUGFIX` Fixes G++ warnings and implements a copy assignment operator for mINI::INIMap. ([#28](https://github.com/metayeti/mINI/pull/28))  
+-- Updated lest from v1.32.0 to v1.35.2.  
 
 ## 0.9.16 (Aug 1, 2023)
 - Leading and trailing quotes now get trimmed from the values. ("mustang" -> mustang)
